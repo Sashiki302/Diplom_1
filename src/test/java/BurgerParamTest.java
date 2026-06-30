@@ -22,7 +22,7 @@ public class BurgerParamTest {
         this.expectedPrice = expectedPrice;
     }
 
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "Расчет цены: {0} {1} {2}, где {0} - цена булки, {1} - цена соуса, {2} - итоговая цена булки (цена булка * 2 + цена соус)")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 { 100f, 25f, 225f },

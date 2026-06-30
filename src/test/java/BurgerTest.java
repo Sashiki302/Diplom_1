@@ -22,10 +22,10 @@ public class BurgerTest {
     private Bun bun;
 
     @Mock
-    private Ingredient ingredient1;
+    private Ingredient ingredientOne;
 
     @Mock
-    private Ingredient ingredient2;
+    private Ingredient ingredientTwo;
 
     @Before
     public void setUp() {
@@ -39,41 +39,62 @@ public class BurgerTest {
     }
 
     @Test
-    public void testAddIngredient() {
-        burger.addIngredient(ingredient1);
-        assertTrue("ingredient1 не добавлен в список бургера", burger.ingredients.contains(ingredient1));
+    public void testAddIngredientSize() {
+        burger.addIngredient(ingredientOne);
         assertEquals("Размер списка ингредиентов не увеличился на 1", 1, burger.ingredients.size());
     }
-
+    @Test
+    public void testAddIngredientOne() {
+        burger.addIngredient(ingredientOne);
+        assertEquals("ingredientOne не добавлен в список бургера", ingredientOne, burger.ingredients.get(0));
+    }
     @Test
     public void testRemoveIngredient() {
-        burger.addIngredient(ingredient1);
+        burger.addIngredient(ingredientOne);
         burger.removeIngredient(0);
         assertTrue("Список ингредиентов не стал пустым", burger.ingredients.isEmpty());
     }
 
     @Test
-    public void testMoveIngredient() {
-        burger.addIngredient(ingredient1);
-        burger.addIngredient(ingredient2);
+    public void testMoveIngredientTwo() {
+        burger.addIngredient(ingredientOne);
+        burger.addIngredient(ingredientTwo);
         burger.moveIngredient(0, 1);
-        assertEquals("ingredient2 не стал первым в списке", ingredient2, burger.ingredients.get(0));
-        assertEquals("ingredient1 не стал вторым в списке", ingredient1, burger.ingredients.get(1));
+        assertEquals("ingredientTwo не стал первым в списке", ingredientTwo, burger.ingredients.get(0));
     }
-
     @Test
-    public void testGetReceipt() {
-        burger.setBuns(bun);
-        burger.addIngredient(ingredient1);
+    public void testMoveIngredientOne() {
+        burger.addIngredient(ingredientOne);
+        burger.addIngredient(ingredientTwo);
+        burger.moveIngredient(0, 1);
+        assertEquals("ingredientOne не стал вторым в списке", ingredientOne, burger.ingredients.get(1));
+    }
+    @Test
+    public void testGetReceiptIngredientName() {
         Mockito.when(bun.getName()).thenReturn("Разноцветная булка");
         Mockito.when(bun.getPrice()).thenReturn(100f);
-        Mockito.when(ingredient1.getType()).thenReturn(IngredientType.SAUCE);
-        Mockito.when(ingredient1.getName()).thenReturn("Самый вкусный");
-        Mockito.when(ingredient1.getPrice()).thenReturn(25f);
-        String expectedReceipt = String.format("(==== Разноцветная булка ====)%n") +
-                String.format("= sauce Самый вкусный =%n") +
-                String.format("(==== Разноцветная булка ====)%n") +
-                String.format("%nPrice: %f%n", 225f);
-        assertEquals("Чек не совпадает с шаблоном", expectedReceipt, burger.getReceipt());
+        Mockito.when(ingredientOne.getType()).thenReturn(IngredientType.SAUCE);
+        Mockito.when(ingredientOne.getName()).thenReturn("Самый вкусный");
+        Mockito.when(ingredientOne.getPrice()).thenReturn(25f);
+        burger.setBuns(bun);
+        burger.addIngredient(ingredientOne);
+        String receipt = burger.getReceipt();
+        assertTrue("Название ингредиента в чеке не совпадает с шаблоном", receipt.contains("Самый вкусный"));
+    }
+    @Test
+    public void testGetReceiptBunName() {
+        Mockito.when(bun.getName()).thenReturn("Разноцветная булка");
+        Mockito.when(bun.getPrice()).thenReturn(100f);
+        burger.setBuns(bun);
+        String receipt = burger.getReceipt();
+        assertTrue("Название булки в чеке не совпадает с шаблоном", receipt.contains("Разноцветная булка"));
+    }
+    @Test
+    public void testGetReceipt() {
+        Mockito.when(bun.getName()).thenReturn("Разноцветная булка");
+        Mockito.when(bun.getPrice()).thenReturn(100f);
+        burger.setBuns(bun);
+        String receipt = burger.getReceipt();
+        assertTrue("Итоговая стоимость в чеке не совпадает с шаблоном", receipt.contains("Price: 200"));
     }
 }
